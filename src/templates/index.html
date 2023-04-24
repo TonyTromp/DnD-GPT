@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GPT API Chat - model {{model}}</title>
+    <link rel="stylesheet" href="/resources/css/chat-style.css">    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/resources/js/flaskgpt_client.js"></script>
+ 
+  </head>
+  <body>
+    <div class="chat-container">
+      <h1>FlaskGPT API</h1>
+        
+
+    <table width="100%">
+    <form id="chat-form">
+    <tr>
+      <td colspan="3">
+        <div id="result">
+        <ol class="messages" id="chat_history">
+          <li class="mine"><span>Use the text-input below</span></li>
+          <li><span>To start chatting.</span></li>
+          <li class="mine"><span>Or you can use the microphone, if you are on Chrome.</span></li>
+        </ol>    
+      </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td width="*"><input style="width: 100%;" type="text" id="user-input" name="user_input" placeholder="Type your message or use the microphone as input..." /></td>
+      <td width="10">
+        <span class="tog" id="mic_toggle">
+          <img src="/resources/img/mic_0.png">
+          <img src="/resources/img/mic_red.png" style="display:none;">
+       </span>        
+      </td>
+      <td align="right" width="20"><button style="text-align: right" type="submit" id="submitBtn">Send</button></td>
+    </tr>
+    <tr>
+      <td colspan="2">&#128264; Enable text-to-speech (Chrome)</td>
+      <td align="right">
+          <select id="enable_tts">
+            <option value="false">No</option>
+            <option value="true">Yes</option>
+          </select>
+      </td>
+    </tr>
+    </form>
+    </table>
+
+  </div>
+
+    <script lanuage="Javascript">
+      wsr_enabled = false;
+
+
+
+      flask_gpt=new FlaskGPT();
+
+      window.onload = function () {
+        document.getElementById("chat-form").addEventListener("submit", function (event) {
+            // Prevent the form from submitting and refreshing the page
+            event.preventDefault();
+
+            let userInput = document.getElementById("user-input").value;
+            let url = `/gpt?user_input=${encodeURIComponent(userInput)}`;
+
+            add_chathistory(userInput,'mine');
+
+            flask_gpt.addUserInput(
+              document.getElementById("user-input").value,
+              function(obj) {
+                add_chathistory(obj.result,'');
+                document.getElementById("user-input").value=''
+                document.getElementById("user-input").focus();                
+                if (isTTSenabled()) {
+                  flask_gpt.textToSpeech(obj.result);
+                }
+              }
+            );
+
+          });
+                  
+      };
+
+      function add_chathistory(message, className) {
+        ol_elem=document.getElementById('chat_history');
+        li=document.createElement('li');
+        li.className=className;
+        span=document.createElement('span');
+        span.innerHTML=message;
+
+        li.appendChild(span);            
+        ol_elem.appendChild(li);
+
+        //Scroll content down
+        ol_elem.scrollTop = ol_elem.scrollHeight;        
+      }
+
+      function toggle_wsr() {
+        wsr_enabled = !wsr_enabled;
+
+        if (wsr_enabled) {
+          flask_gpt.speechToText(function(text){
+            document.getElementById("user-input").value = text;
+            // disable/reset mic toggle after input stopped
+            $(".tog").click();
+          });
+        } else {
+          //wsr.stop();
+          null;
+        }
+      }
+
+      function isTTSenabled() {
+        return eval(document.getElementById('enable_tts').value);
+      }
+      
+
+      $(".tog").click(function(){
+        $('img',this).toggle();
+        toggle_wsr();
+      });
+
+      $("submitBtn").click(function(){
+        $(this).toggleClass('submitBtn-grey');
+      });
+
+      
+
+
+
+    </script>
+  </body>
+</html>
+
+

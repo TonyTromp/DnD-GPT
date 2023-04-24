@@ -1,0 +1,15 @@
+version: '2.2'
+
+services:
+  flask-gpt:
+    image: edgecrush3r/DnD-gpt:latest
+    build:
+      context: .
+    volumes:
+      - ./src:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_ORGANIZATION=${OPENAI_ORGANIZATION}
+      
