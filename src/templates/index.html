@@ -5,136 +5,524 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GPT API Chat - model {{model}}</title>
-    <link rel="stylesheet" href="/resources/css/chat-style.css">    
+    <link rel="stylesheet" href="/resources/css/chat-style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+
+    <!--
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    -->    
+
+
     <script src="/resources/js/flaskgpt_client.js"></script>
- 
+    <script src="/resources/js/dnd_client.js"></script>
+
+    <style>
+      .frame-top {
+        background-image: url(/resources/img/frame/Topframe-mid.png);
+        width: 1088px;
+        height: 209px;
+      }
+      .frame-left{
+        background-image: url(/resources/img/frame/Leftframe-mid.png);
+        width: 151px;
+        height: 435px;
+      }
+
+      .frame-right{
+        background-image: url(/resources/img/frame/Rightframe-mid.png);
+        width: 150px;
+        height: 435px;
+      }
+
+      .frame-bottom{
+        background-image: url(/resources/img/frame/Bottomframe-mid.png);
+        width: 1088px;
+        height: 218px;
+      }
+
+      .frame-content{
+        background-color: black;
+        background-image: url(/resources/img/frame/framebg01.jpeg);
+        color: white;
+      }
+
+      .dm-input-name {
+        width: 100%;
+        text-align: left;
+      }
+
+      .dm-input-persona {
+        text-align: left;
+      }
+
+      .dm-input-bg {
+        background-color: #ffffff;
+        width: 300px;
+      }
+
+      .pill-button {
+        background-color: #eb3f3f;
+        color: rgb(255, 255, 255);
+
+        border: none;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 24px;
+      }
+
+      .pill-button:hover {
+        background-color: #f1f1f1;
+      }
+
+      .panel {
+        width: 800px;
+      }
+
+      .raceclass {
+        color: rgb(224, 224, 15);
+      }
+
+  
+    </style>
   </head>
   <body>
+
+    
     <div class="chat-container">
-      <h1>FlaskGPT API</h1>
-        
+      <h1>Dungeons & GPT</h1>
+      <p align="center">
+      <table border="0" cellspacing="0" cellpadding="0" class="center">
+        <tr>
+          <td colspan="3" class="frame-top">&nbsp;</td>
+        </tr>
+        <tr>
+          <td class="frame-left">&nbsp;</td>
+          <td class="frame-content" id="frame-content">
+            <div id="story_panel">
+              <!-- Panel::Intro -->
+              <div id="panel_start" class="panel">
+                <p align="center">
+                  <h1>Welcome young traveller</h1>
+                  <div>
+                    To start your procedural generated quest, your first task is to create your Dungeon Master. 
+                    Choose your Dungeon Master wisely, as your live will be in his hands.
+                  </div>
+                </p>
+                <p>&nbsp;</p>
+                <p>
+                  <button id="btn_start_game" type="button" class="pill-button">&#x21E8; Continue</button>
+                </p>
+              </div>
 
-    <table width="100%">
-    <form id="chat-form">
-    <tr>
-      <td colspan="3">
-        <div id="result">
-        <ol class="messages" id="chat_history">
-          <li class="mine"><span>Use the text-input below</span></li>
-          <li><span>To start chatting.</span></li>
-          <li class="mine"><span>Or you can use the microphone, if you are on Chrome.</span></li>
-        </ol>    
-      </div>
-      </td>
-    </tr>
+              <!-- Panel::Create Dungeon Master -->
+              <div id="panel_create_dm" class="panel d-none">
+                <p align="center">
+                  <h1>Your Dungeon Master</h1>
 
-    <tr>
-      <td width="*"><input style="width: 100%;" type="text" id="user-input" name="user_input" placeholder="Type your message or use the microphone as input..." /></td>
-      <td width="10">
-        <span class="tog" id="mic_toggle">
-          <img src="/resources/img/mic_0.png">
-          <img src="/resources/img/mic_red.png" style="display:none;">
-       </span>        
-      </td>
-      <td align="right" width="20"><button style="text-align: right" type="submit" id="submitBtn">Send</button></td>
-    </tr>
-    <tr>
-      <td colspan="2">&#128264; Enable text-to-speech (Chrome)</td>
-      <td align="right">
-          <select id="enable_tts">
-            <option value="false">No</option>
-            <option value="true">Yes</option>
-          </select>
-      </td>
-    </tr>
-    </form>
-    </table>
+                  <div>
+                    <img src="/random_image/avatar/" style="width: 80px; height: 80px;" />
+
+                    <table class="center" border="0" cellpadding="4" cellspacing="4" width="640">
+                      <tr valign="top">
+                        <td width="100">Your DM:</td>
+                        <td align="left" width="*"><select id="dm-input-name" type="text" class="form-control dm-input-name"></select></td>
+                        <td width="150"><button id="btn_randomDM" type="button" class="btn btn-info">Generate</button></td>
+                      </tr>
+                      <tr valign="top">
+                        <td>Description:</td>
+                        <td colspan="2" align="left">
+                          <div id="dm-input-persona"></div>
+                        </td>
+                      </tr>
+                    </table>
+
+                  </div>
+                </p>
+                <p>
+                  <button id="btn_create_dm" type="button" class="pill-button">&#x21E8; Continue</button>
+                </p>
+              </div>
+
+              <!-- Panel::Create Your Party Master -->
+              <div id="panel_create_party" class="panel d-none">
+                <p align="center">
+                  <h1>Create Party</h1>
+                  <p>
+                    This will help you to create how many heroes there should be in your party, and their characteristics such as race, class, age and background story.
+                    You may change and mold these characters to your own likening. 
+                  </p>
+
+                  <table border="0" class="center">
+                  <tr>
+                    <td>Number of characters</td>
+                    <td>&nbsp;</td>
+                    <td>
+                      <select class="form-control">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option selected>4</option>
+                      </select>
+                    </td>
+                  </tr>
+                  </table>
+                </p>
+                <p>
+                  <button id="btn_create_party" type="button" class="pill-button">&#x21E8; Continue</button>
+                </p>
+               
+              </div>
+
+              <div id="panel_review_party" class="panel d-none">
+                <p align="center">
+                  <h1>Your Party</h1>                
+
+                  <div class="bd-example">
+                    <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
+                      <ol class="carousel-indicators">
+                        <li data-target="#carouselExampleCaptions" data-slide-to="0" class="active"></li>
+                        <li data-target="#carouselExampleCaptions" data-slide-to="1"></li>
+                        <li data-target="#carouselExampleCaptions" data-slide-to="2"></li>
+                      </ol>
+                      <div id="carousel-inner" class="carousel-inner">
+                        <!-- is left for Dev purposes. carousel is populated from JS.
+                        <div class="carousel-item active">
+                          <img src="/resources/img/avatar/elf/elfen_warrior_f01.png" class="d-block w-100" alt="...">
+                          <div class="carousel-caption d-none d-md-block">
+                            <h5>&#9998; Elara</h5>
+                            <p><span class="raceclass">Wood Elf/Ranger</span> A skilled archer and tracker, Elara is a determined and independent ranger who seeks to protect the natural world and those who live within it.</p>
+                          </div>
+                        </div>
+                        -->
+                      </div>
+                      <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                      </a>
+                      <a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                      </a>
+                      
+                    </div>
+                  </div>
+
+
+
+                </p>
+                <p>
+                  <button id="btn_review_party" type="button" class="pill-button">&#x21E8; Continue</button>
+                </p>
+              </div>
+
+
+
+            </div>
+
+
+
+
+          </td>
+          <td class="frame-right">&nbsp;</td>
+        </tr>
+        <tr>
+          <td colspan="3" class="frame-bottom">&nbsp;</td>
+        </tr>
+      </table>
+      </p>
+
+      <table width="100%">
+      <form id="chat-form">
+      <tr>
+        <td colspan="3">
+          <div id="result">
+          <ol class="messages" id="chat_history">
+            <li class="mine"><span>Use the text-input below</span></li>
+            <li><span>To start chatting.</span></li>
+            <li class="mine"><span>Or you can use the microphone, if you are on Chrome.</span></li>
+          </ol>    
+        </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td width="*"><input style="width: 100%;" type="text" id="user-input" name="user_input" placeholder="Type your message or use the microphone as input..." /></td>
+        <td width="10">
+          <span class="tog" id="mic_toggle">
+            <img src="/resources/img/mic_0.png">
+            <img src="/resources/img/mic_red.png" style="display:none;">
+        </span>        
+        </td>
+        <td align="right" width="20"><button style="text-align: right" type="submit" id="submitBtn">Send</button></td>
+      </tr>
+      <tr>
+        <td colspan="2">&#128264; Enable text-to-speech (Chrome)</td>
+        <td align="right">
+            <select id="enable_tts">
+              <option value="false">No</option>
+              <option value="true">Yes</option>
+            </select>
+        </td>
+      </tr>
+      </form>
+      </table>
 
   </div>
 
-    <script lanuage="Javascript">
-      wsr_enabled = false;
+<script lanuage="Javascript">
+  wsr_enabled = false;
+  dm_personas = false;
 
+  flask_gpt=new FlaskGPT();
+  dnd_gpt=new DnGPT();
+  function isTTSenabled() {
+    return eval(document.getElementById('enable_tts').value);
+  }
+      
 
+  $(".tog").click(function(){
+    $('img',this).toggle();
+    toggle_wsr();
+  });
 
-      flask_gpt=new FlaskGPT();
+  $("submitBtn").click(function(){
+    $(this).toggleClass('submitBtn-grey');
+  });
 
-      window.onload = function () {
-        document.getElementById("chat-form").addEventListener("submit", function (event) {
-            // Prevent the form from submitting and refreshing the page
-            event.preventDefault();
+  function add_chathistory(message, className) {
+    ol_elem=document.getElementById('chat_history');
+    li=document.createElement('li');
+    li.className=className;
+    span=document.createElement('span');
+    span.innerHTML=message;
 
-            let userInput = document.getElementById("user-input").value;
-            let url = `/gpt?user_input=${encodeURIComponent(userInput)}`;
+    li.appendChild(span);            
+    ol_elem.appendChild(li);
 
-            add_chathistory(userInput,'mine');
+    //Scroll content down
+    ol_elem.scrollTop = ol_elem.scrollHeight;        
+  }
 
-            flask_gpt.addUserInput(
-              document.getElementById("user-input").value,
-              function(obj) {
-                add_chathistory(obj.result,'');
-                document.getElementById("user-input").value=''
-                document.getElementById("user-input").focus();                
-                if (isTTSenabled()) {
-                  flask_gpt.textToSpeech(obj.result);
-                }
+  function toggle_wsr() {
+    wsr_enabled = !wsr_enabled;
+
+    if (wsr_enabled) {
+      flask_gpt.speechToText(function(text){
+        document.getElementById("user-input").value = text;
+        // disable/reset mic toggle after input stopped
+        $(".tog").click();
+      });
+    } else {
+      //wsr.stop();
+      null;
+    }
+  }
+
+  function getPersonaByName(name) {
+    revalue=false;
+    dm_personas.forEach((persona,index) => {
+      if (persona.name==name) {
+        revalue=persona;
+      }
+    });
+    return revalue;
+  }
+
+  // UI add carousel
+  function ui_add_hero_carousel(carousel_id, is_active, hero) {
+    carousel_item=document.createElement('div');
+    carousel_item.className='carousel-item';
+    if (is_active) {
+      carousel_item.className+=' active';
+    }
+
+    carousel_item.innerHTML = `<img src="`+ hero.image_url +`"" class="d-block w-100" alt="...">
+        <div class="carousel-caption d-none d-md-block">
+          <h5>&#9998; `+ hero.name +`</h5>
+          <p><span class="raceclass">`+ hero.race +`/`+ hero.class +`</span>`+ hero.character +`</p>
+        </div>`;
+    
+    document.getElementById(carousel_id).appendChild(carousel_item);
+  }
+
+  // Hides all parent_div::children divs and shows div_to_show
+  function ui_toggle_panel(parent_div,div_to_show) {
+    $('#'+parent_div).children('.panel').each(function () {
+      if (this.id==div_to_show) {
+        $('#'+this.id).removeClass("d-none"); // remove bootstrap class if used
+        $('#'+this.id).show();
+        $('#story_panel').trigger("on_panelchanged",this);
+        
+
+      } else {
+        $('#'+this.id).hide();
+      }
+    });
+  }
+
+  // Event Handler For Panels/Game-Screens
+  function ui_on_panel_changed(event, panel) {
+    console.log('Event::ui_on_panel_changed->'+panel.id);
+    switch (panel.id) {
+      case 'panel_create_dm':
+              $("#frame-content").css("background-image",'url("/resources/img/background/dnd_books_03.png")');
+              break;
+      case  'panel_create_party':
+              $("#frame-content").css("background-image",'url("/resources/img/background/dnd_tavern01.png")');
+              break;
+      case 'panel_review_party':
+              // Initialize Carousel
+              $("#carousel-inner").empty();
+              for (var i=0; i<dnd_gpt.Party.length; i++) {
+                ui_add_hero_carousel('carousel-inner', (i==0), dnd_gpt.Party[i]);
               }
-            );
+              break;
+    }
+  }
 
-          });
-                  
-      };
+  function ui_add_option(select_elem,name,value) {
+    dom_obj=document.getElementById(select_elem);
+    if (dom_obj) {
+      opt=document.createElement('option');
+      opt.appendChild(document.createTextNode(value))
+      opt.name=name;
+    } else {
+      throw Error('DOM not found');
+    }
 
-      function add_chathistory(message, className) {
-        ol_elem=document.getElementById('chat_history');
-        li=document.createElement('li');
-        li.className=className;
-        span=document.createElement('span');
-        span.innerHTML=message;
+    dom_obj.appendChild(opt);
+  }
 
-        li.appendChild(span);            
-        ol_elem.appendChild(li);
+  window.onload = function () {
+      // Custom Event, when new Panel/Screen is loaded.
+      $('#story_panel').on("on_panelchanged", ui_on_panel_changed);
 
-        //Scroll content down
-        ol_elem.scrollTop = ol_elem.scrollHeight;        
-      }
+      // Change Background image
+      document.body.style.backgroundImage = "url('/random_image/background/start/')";
 
-      function toggle_wsr() {
-        wsr_enabled = !wsr_enabled;
+      // Load DM Personas
+      dnd_gpt.getPersonasFromConfig(
+        function(data) {
+          if (data) {
+            dm_personas=data['result'];
+            dm_personas.forEach((persona,index) => {
+              ui_add_option('dm-input-name', persona.name, persona.name);
+            });  
+          } else {
+            alert('ChatGPT didnt answer in JSON. Please re-roll dice.');
+          }
 
-        if (wsr_enabled) {
-          flask_gpt.speechToText(function(text){
-            document.getElementById("user-input").value = text;
-            // disable/reset mic toggle after input stopped
-            $(".tog").click();
-          });
-        } else {
-          //wsr.stop();
-          null;
+          // Show Default Persona
+          persona=getPersonaByName($("#dm-input-name").val())
+          $("#dm-input-persona").html(persona.character);
         }
-      }
+      )
 
-      function isTTSenabled() {
-        return eval(document.getElementById('enable_tts').value);
-      }
-      
-
-      $(".tog").click(function(){
-        $('img',this).toggle();
-        toggle_wsr();
+      // AddEvent::PersonaSelect
+      document.getElementById("dm-input-name").addEventListener('change',function (event) {
+        persona=getPersonaByName($("#dm-input-name").val());
+        if (persona) {
+          //$("#dm-input-persona").val(persona.character);
+          $("#dm-input-persona").html(persona.character);
+        }
       });
 
-      $("submitBtn").click(function(){
-        $(this).toggleClass('submitBtn-grey');
+      // AdddEvent:Submit
+      document.getElementById("chat-form").addEventListener("submit", function (event) {
+          // Prevent the form from submitting and refreshing the page
+          event.preventDefault();
+
+          let userInput = document.getElementById("user-input").value;
+          let url = `/gpt?user_input=${encodeURIComponent(userInput)}`;
+
+          add_chathistory(userInput,'mine');
+
+          flask_gpt.addUserInput(
+            document.getElementById("user-input").value,
+            function(obj) {
+              add_chathistory(obj.result,'');
+              document.getElementById("user-input").value=''
+              document.getElementById("user-input").focus();                
+              if (isTTSenabled()) {
+                flask_gpt.textToSpeech(obj.result);
+              }
+            }
+          );
       });
 
+      // AddEvent: Button Generate Random DM
+      document.getElementById("btn_randomDM").addEventListener("click", function (event) {
+        // Loading... Fetching DM Persona from ChatGPT
+        $(this).prop("original_html", $(this).html());
+        $(this).prop("disabled", true);
+        $(this).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
+        $("#dm-input-name").prop("disabled", true);
+
+        dnd_gpt.generateDMPersona(function(data) {
+          persona=data.result.response;
+          dm_personas.push(persona);
+
+          // update UI with new DM
+          ui_add_option('dm-input-name', persona.name, persona.name)
+          
+          var lastOption = $('#dm-input-name option:last-child');
+          $('#dm-input-name').val(lastOption.val());
+          $("#dm-input-persona").html(persona.character);
+
+          // Enable UI again
+          $("#btn_randomDM").html('Generate');
+          $("#btn_randomDM").prop("disabled", false);
+          $("#dm-input-name").prop("disabled", false);
+        })
+      });
+
+
+      // Setup Button events
+
+      // AddEvent::Button - btn_start_game
+      document.getElementById("btn_start_game").addEventListener("click", function (event) {
+        ui_toggle_panel('story_panel','panel_create_dm');
+      });
+
+      // AddEvent::Button - btn_create_dm
+      document.getElementById("btn_create_dm").addEventListener("click", function (event) {
+        // Code to setup DM.
+        dnd_gpt.DungeonMaster=getPersonaByName($("#dm-input-name").val());
+        console.log(dnd_gpt.DungeonMaster);
+
+        dnd_gpt.submitDMPersona(function(data){
+          console.log('Client done')
+          console.log(data);
+        });
+
+
+        ui_toggle_panel('story_panel','panel_create_party');
+      });
+
+      // AddEvent::Button - btn_create_party
+      document.getElementById("btn_create_party").addEventListener("click", function (event) {
+        ui_toggle_panel('story_panel','panel_review_party');
+      });
       
-
-
+      
+                
+    }; // End OnWindow Load
 
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>  
+    
+
   </body>
 </html>
-
-

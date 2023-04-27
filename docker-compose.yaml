@@ -2,7 +2,7 @@ version: '2.2'
 
 services:
   flask-gpt:
-    image: edgecrush3r/DnD-gpt:latest
+    image: edgecrush3r/dnd-gpt:latest
     build:
       context: .
     volumes:
@@ -12,4 +12,3 @@ services:
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - OPENAI_ORGANIZATION=${OPENAI_ORGANIZATION}
-      
