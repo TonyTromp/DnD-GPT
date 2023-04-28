@@ -9,7 +9,7 @@ input_path = './resources/img/avatar/*/*.png'
 save_file_prefix = 'small_'
 recursive = True
 
-dst_size = 0.5;
+dst_size = 0.60;
 
 for filename in glob(input_path, recursive=recursive):
     print('[+] Processing: '+filename)
