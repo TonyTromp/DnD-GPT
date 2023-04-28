@@ -3,7 +3,7 @@ class DnGPT {
   /* Default Party */
   Party = [
     {
-      "image_url": "/resources/img/avatar/elf/elfen_warrior_f01.png",
+      "image_url": "/resources/img/avatar/elf/small_elfen_warrior_f01.png",
       "name": "Elara Windwhisper",
       "age": 128,
       "gender": "Female",
@@ -12,7 +12,7 @@ class DnGPT {
       "character": "Elara Windwhisper is a master of the bow, trained in the ancient elven ways of archery. She roams the forests and mountains, defending her homeland from all who would threaten it. She is quiet and reserved, but her aim is deadly and her loyalty unwavering."
     },
     {
-      "image_url": "/resources/img/avatar/orc/orc_warrior_m10.png",
+      "image_url": "/resources/img/avatar/orc/small_orc_warrior_m10.png",
       "name": "Grommash Hellscream",
       "age": 40,
       "gender": "Male",
@@ -21,7 +21,7 @@ class DnGPT {
       "character": "Grommash is a fierce and powerful warrior, feared by many for his incredible strength and fighting prowess. Despite his fearsome reputation, he has a strong sense of honor and loyalty to his allies."
     },
     {
-      "image_url": "/resources/img/avatar/elf/elfen_wizard_f01.png",
+      "image_url": "/resources/img/avatar/elf/small_elfen_wizard_f01.png",
       "name": "Lirienia Nightshade",
       "age": 240,
       "gender": "Female",
@@ -30,7 +30,7 @@ class DnGPT {
       "character": "Lirienia is a powerful wizard, known for her incredible mastery of the arcane arts. She is often lost in her own thoughts and can be a bit absent-minded at times, but her intellect and magical abilities are unmatched."
     },
     {
-      "image_url": "/resources/img/avatar/human/human_warrior_m03.png",
+      "image_url": "/resources/img/avatar/human/small_human_warrior_m03.png",
       "name": "Aiden Blackwood",
       "age": 28,
       "gender": "Male",

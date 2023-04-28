@@ -7,10 +7,15 @@ body {
   background-repeat: no-repeat;
   background-size: 100% 100%;
   background-position: center;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
 
 html {
   margin-top: 0px;
+  height: 100%;
 }
 
 .chat-container {
