@@ -20,6 +20,13 @@
       .frametable {
         width: 781px;
       }
+
+      .frame-content{
+        background-image: url(/resources/img/frame/framebg01.jpeg);
+        background-size: 100% 100%;
+        color: white;
+      }
+
       .frame-top {
         background-image: url(/resources/img/frame/small-Topframe.png);
         width: 781px;
@@ -41,11 +48,6 @@
         background-image: url(/resources/img/frame/small-Bottomframe.png);
         width: 781px;
         height: 54px;
-      }
-
-      .frame-content{
-        background-image: url(/resources/img/frame/framebg01.jpeg);
-        color: white;
       }
 
       .dm-input-name {
@@ -112,7 +114,14 @@
         height: 512px;
         width: 512px;
         */
+      }
 
+      .bottom-center {
+        position: absolute; 
+        bottom: 0;
+        left: 50%; 
+        margin: 0 auto; 
+        transform: translate(-50%, -50%);
       }
    
     </style>
@@ -151,7 +160,6 @@
               <div id="panel_create_dm" class="panel d-none">
                 <p align="center">
                   <h1>Your Dungeon Master</h1>
-
                   <div>
                     <img src="/random_image/avatar/" style="width: 80px; height: 80px;" />
                     <table class="center" border="0" cellpadding="4" cellspacing="4" width="640">
@@ -159,6 +167,9 @@
                         <td width="100">Your DM:</td>
                         <td align="left" width="*"><select id="dm-input-name" type="text" class="form-control dm-input-name"></select></td>
                         <td width="150"><button id="btn_randomDM" type="button" class="btn btn-info">Generate</button></td>
+                      </tr>
+                      <tr>
+                        <td colspan="3" style="height:10px;"></td>
                       </tr>
                       <tr valign="top">
                         <td>Description:</td>
@@ -176,9 +187,10 @@
               </div>
 
               <!-- Panel::Create Your Party Master -->
-              <div id="panel_create_party" class="panel d-none">
+              <div id="panel_create_party" class="panel d-none" style="height: 512px;position: relative;">
                 <p align="center">
                   <h1>Create Party</h1>
+                  <br />&nbsp;
                   <p>
                     This will help you to create how many heroes there should be in your party, and their characteristics such as race, class, age and background story.
                     You may change and mold these characters to your own likening. 
@@ -199,9 +211,9 @@
                   </tr>
                   </table>
                 </p>
-                <p>
+                <div class="bottom-center">
                   <button id="btn_create_party" type="button" class="pill-button">&#x21E8; Continue</button>
-                </p>
+                </div>
                
               </div>
 
@@ -395,18 +407,28 @@
     switch (panel.id) {
       case 'panel_create_dm':
               $("#frame-content").css("background-image",'url("/resources/img/background/frame/dnd_books_03.png")');
+              $("#frame-content").css("background-size",'512px 512px")');
               break;
       case  'panel_create_party':
               $("#frame-content").css("background-image",'url("/resources/img/background/frame/dnd_tavern01.png")');
+              $("#frame-content").css("background-size","781px 512px");
+              $("#story_panel ").css("height","512px");
               break;
       case 'panel_review_party':
+              $("#frame-content").css("background-size","");
+              $("#story_panel ").css("height","");
               $("#frame-content").css("background-image", '');
               $("#frame-content").css("background-color", '#000000');
-              // Initialize Carousel
-              /* $("#carousel-inner").empty(); */
-              for (var i=0; i<dnd_gpt.Party.length; i++) {
-                ui_add_hero_carousel('carousel-inner-div', (i==0), dnd_gpt.Party[i]);
-              }
+              // Initialize Party
+              dnd_gpt.setHeroImages();
+
+              // Quick hack wait for async calls Initialize Carousel
+              setTimeout(function() {
+                for (var i=0; i<dnd_gpt.Party.length; i++) {
+                  ui_add_hero_carousel('carousel-inner-div', (i==0), dnd_gpt.Party[i]);
+                }
+                
+              }, 2000);
               break;
     }
   }

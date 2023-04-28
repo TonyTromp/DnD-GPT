@@ -175,7 +175,50 @@ def get_random_party():
     except json.JSONDecodeError:
         json_content = json.loads( {"result": "JSONDecodeError.. ChatGPT did not return in JSON Format"} )
     return jsonify(json_content);    
+
+# get avatar-url
+@app.route('/get_avatar_url', methods=['GET', 'POST'])
+def get_avatar():
+    logging.info("[+] get_avatar()")
+
+    race   = request.args.get('race') if request.method == 'GET' else request.form['race']
+    hclass = request.args.get('class') if request.method == 'GET' else request.form['class']
+    gender = request.args.get('gender') if request.method == 'GET' else request.form['gender']
+    party_idx = request.args.get('party_idx') if request.method == 'GET' else request.form['party_idx']
+
+
+    # default race
+    if not race:
+        race = 'human'
+    else:
+        race = race.lower()
+        if not race in ('dwarf', 'elf', 'human', 'orc'):
+            race = 'warrior'
+    if not hclass:
+        hclass = '*'
+    else:
+        hclass = hclass.lower()
+        if not hclass in ('thief', 'warrior', 'wizard'):
+            hclass = 'warrior'
+    if not gender:
+        gender = '*'
+    else:
+        gender = gender[0].lower()
+    if not party_idx:
+        party_idx = 0
     
+
+    
+    fpattern = "./resources/img/avatar/{race}/small_{race}_{hclass}_{gender}*.png".format(race=race, hclass=hclass, gender=gender)
+    logging.info("- "+ str(fpattern))
+
+    try:
+      choosen_file=random.choice( glob(fpattern) );
+    except IndexError as error:
+      return 'get_avatar::Unable to create URL', 503
+
+    return jsonify({"result": {"url":choosen_file} });
+
 
 
 if __name__ == '__main__':
