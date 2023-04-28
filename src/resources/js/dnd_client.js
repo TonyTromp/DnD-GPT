@@ -1,9 +1,11 @@
 class DnGPT {
+  onPartyChanged = new CustomEvent("onPartyChanged")
+
   DungeonMaster;
   /* Default Party */
   Party = [
     {
-      "image_url": "/resources/img/avatar/elf/small_elfen_warrior_f01.png",
+      "image_url": "/resources/img/avatar/elf/small_elf_warrior_f01.png",
       "name": "Elara Windwhisper",
       "age": 128,
       "gender": "Female",
@@ -21,7 +23,7 @@ class DnGPT {
       "character": "Grommash is a fierce and powerful warrior, feared by many for his incredible strength and fighting prowess. Despite his fearsome reputation, he has a strong sense of honor and loyalty to his allies."
     },
     {
-      "image_url": "/resources/img/avatar/elf/small_elfen_wizard_f01.png",
+      "image_url": "/resources/img/avatar/elf/small_elf_wizard_f01.png",
       "name": "Lirienia Nightshade",
       "age": 240,
       "gender": "Female",
@@ -105,6 +107,30 @@ class DnGPT {
       , "character": story
       , "image_url": image_url
     }
+  }
+
+  getHeroImageURL(hero,partyObj) {
+    var url = `/get_avatar_url?race=${hero.race}&class=${hero.class}&gender=${hero.gender}`;
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+          hero.image_url = data.result.url;
+          console.log(hero.image_url );
+          this.Party.pop()
+          this.Party.push(hero)
+      }).catch((error) => {
+        console.error("Error fetching Personas", error);
+    });
+
+  }
+
+  setHeroImages() {
+    this.Party.forEach(obj => {
+      console.log(obj)
+      this.getHeroImageURL(obj,this.Party)
+    });
+
+
   }
 
   addHero(hero) {
