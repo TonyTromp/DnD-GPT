@@ -1,8 +1,15 @@
 class DnGPT {
-  onPartyChanged = new CustomEvent("onPartyChanged")
 
   DungeonMaster;
   /* Default Party */
+  onPartyChanged = new CustomEvent("onPartyChanged", {
+    detail: {},
+    bubbles: true,
+    cancelable: true,
+    composed: false,
+  });
+  EventTarget = new EventTarget();
+
   Party = [
     {
       "image_url": "/resources/img/avatar/elf/small_elf_warrior_f01.png",
@@ -109,7 +116,7 @@ class DnGPT {
     }
   }
 
-  getHeroImageURL(hero,partyObj) {
+  setHeroImageURL(hero,partyObj) {
     var url = `/get_avatar_url?race=${hero.race}&class=${hero.class}&gender=${hero.gender}`;
     fetch(url)
       .then((response) => response.json())
@@ -127,11 +134,17 @@ class DnGPT {
   setHeroImages() {
     this.Party.forEach(obj => {
       console.log(obj)
-      this.getHeroImageURL(obj,this.Party)
+      this.setHeroImageURL(obj,this.Party)
     });
 
-
+    this.EventTarget.dispatchEvent(this.onPartyChanged)
   }
+  /*
+  dnd_gpt.EventTarget.addEventListener("onPartyChanged", (event) => {
+    console.log("I'm listening on a custom event");
+  });
+  */
+
 
   addHero(hero) {
     Party.push(hero)
