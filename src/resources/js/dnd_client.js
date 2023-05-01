@@ -8,6 +8,9 @@ class DnGPT {
     cancelable: true,
     composed: false,
   });
+
+  //Instead of creating a EventTarget property, we will make the whole class to Extend EventTarget
+  //using: Object.assign(MyObject.prototype, EventTarget.prototype);
   EventTarget = new EventTarget();
 
   Party = [
@@ -116,28 +119,29 @@ class DnGPT {
     }
   }
 
-  setHeroImageURL(hero,partyObj) {
+  setHeroImageURL(hero_idx) {
+    var hero=this.Party[hero_idx];
+    console.log(hero);
+
     var url = `/get_avatar_url?race=${hero.race}&class=${hero.class}&gender=${hero.gender}`;
     fetch(url)
       .then((response) => response.json())
       .then((data) => {
-          hero.image_url = data.result.url;
-          console.log(hero.image_url );
-          this.Party.pop()
-          this.Party.push(hero)
+          this.Party[hero_idx].image_url = data.result.url;
+          console.log(hero_idx +' '+ this.Party.length);
+          if (hero_idx==this.Party.length-1) {
+
+            this.EventTarget.dispatchEvent(this.onPartyChanged)            
+          }
       }).catch((error) => {
         console.error("Error fetching Personas", error);
     });
-
   }
 
   setHeroImages() {
-    this.Party.forEach(obj => {
-      console.log(obj)
-      this.setHeroImageURL(obj,this.Party)
-    });
-
-    this.EventTarget.dispatchEvent(this.onPartyChanged)
+    for (var i=0;i<this.Party.length;i++) {
+      this.setHeroImageURL(i);
+    }
   }
   /*
   dnd_gpt.EventTarget.addEventListener("onPartyChanged", (event) => {
@@ -148,5 +152,6 @@ class DnGPT {
 
   addHero(hero) {
     Party.push(hero)
-  }      
+  }
+
 }

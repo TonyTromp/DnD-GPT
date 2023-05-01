@@ -208,7 +208,7 @@
                         <option selected>4</option>
                       </select>
                     </td>
-                  </tr>
+                   </tr>
                   </table>
                 </p>
                 <div class="bottom-center">
@@ -419,16 +419,16 @@
               $("#story_panel ").css("height","");
               $("#frame-content").css("background-image", '');
               $("#frame-content").css("background-color", '#000000');
-              // Initialize Party
-              dnd_gpt.setHeroImages();
 
-              // Quick hack wait for async calls Initialize Carousel
-              setTimeout(function() {
+              // Initialize Party
+              dnd_gpt.EventTarget.addEventListener("onPartyChanged", (event) => {
+                console.log("onPartyChanged:Update Carousel");
                 for (var i=0; i<dnd_gpt.Party.length; i++) {
                   ui_add_hero_carousel('carousel-inner-div', (i==0), dnd_gpt.Party[i]);
-                }
-                
-              }, 2000);
+                }                  
+              });
+              dnd_gpt.setHeroImages();
+
               break;
     }
   }
