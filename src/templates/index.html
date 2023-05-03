@@ -123,6 +123,16 @@
         margin: 0 auto; 
         transform: translate(-50%, -50%);
       }
+
+      .ta-left {
+        text-align: left;
+      }
+      .ta-center {
+        text-align: center;
+      }
+      .ta-right {
+        text-align: right;
+      }
    
     </style>
   </head>
@@ -198,17 +208,27 @@
 
                   <table border="0" class="center">
                   <tr>
-                    <td>Number of characters</td>
+                    <td class="ta-left">Create Mode</td>
                     <td>&nbsp;</td>
-                    <td>
-                      <select class="form-control">
+                    <td class="ta-left">
+                      <select id="setup_create_mode" class="form-control">
+                        <option value="AI">AI Generated</option>
+                        <option value="DEFAULT">Default</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="ta-left">Number of characters</td>
+                    <td>&nbsp;</td>
+                    <td class="ta-left">
+                      <select id="setup_party_size" class="form-control">
                         <option>1</option>
                         <option>2</option>
                         <option>3</option>
                         <option selected>4</option>
                       </select>
                     </td>
-                   </tr>
+                  </tr>
                   </table>
                 </p>
                 <div class="bottom-center">
@@ -420,7 +440,28 @@
               $("#frame-content").css("background-image", '');
               $("#frame-content").css("background-color", '#000000');
 
-              // Initialize Party
+              // Initialize Party depending on Party Size and Create_Mode
+              create_mode=document.getElementById('setup_create_mode').value;
+              party_size=parseInt(document.getElementById('setup_party_size').value);
+
+              if (create_mode=='AI') {
+                console.log('CreateMode::AI');
+                dnd_gpt.generateParty(party_size,
+                  function(event) {
+                    console.log("onPartyChanged:Update Carousel");
+                    // using Events now
+                    //for (var i=0; i<dnd_gpt.Party.length; i++) {
+                    //  ui_add_hero_carousel('carousel-inner-div', (i==0), dnd_gpt.Party[i]);
+                    //}                  
+                  }
+                );
+              } else {
+                  console.log('CreateMode::DEFAULT');
+                  dnd_gpt.defaultParty(party_size);
+              }
+
+
+              /*
               dnd_gpt.EventTarget.addEventListener("onPartyChanged", (event) => {
                 console.log("onPartyChanged:Update Carousel");
                 for (var i=0; i<dnd_gpt.Party.length; i++) {
@@ -428,6 +469,7 @@
                 }                  
               });
               dnd_gpt.setHeroImages();
+              */
 
               break;
     }
@@ -446,9 +488,23 @@
     dom_obj.appendChild(opt);
   }
 
+  // Occurs when party is generated or default is loaded successfully
+  function on_partychanged_handler() {
+    //Update Carousel based on Party Members
+    console.log("on_partychanged_handler::Update Carousel");
+    $('#carousel-inner-div').empty();
+    for (var i=0; i<dnd_gpt.Party.length; i++) {
+      ui_add_hero_carousel('carousel-inner-div', (i==0), dnd_gpt.Party[i]);
+    }                  
+  }
+
   window.onload = function () {
       // Custom Event, when new Panel/Screen is loaded.
       $('#story_panel').on("on_panelchanged", ui_on_panel_changed);
+
+      // Event::OnPartyChanged_Event
+      dnd_gpt.EventTarget.addEventListener("onPartyChanged", on_partychanged_handler);
+
 
       // Change Background image
       document.body.style.backgroundImage = "url('/random_image/background/start/')";

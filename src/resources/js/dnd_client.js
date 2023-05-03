@@ -1,6 +1,8 @@
 class DnGPT {
 
   DungeonMaster;
+  Party = [];
+
   /* Default Party */
   onPartyChanged = new CustomEvent("onPartyChanged", {
     detail: {},
@@ -9,48 +11,9 @@ class DnGPT {
     composed: false,
   });
 
-  //Instead of creating a EventTarget property, we will make the whole class to Extend EventTarget
-  //using: Object.assign(MyObject.prototype, EventTarget.prototype);
+  // Events will lock into EventTarget Object. Add Listener if needed.
   EventTarget = new EventTarget();
 
-  Party = [
-    {
-      "image_url": "/resources/img/avatar/elf/small_elf_warrior_f01.png",
-      "name": "Elara Windwhisper",
-      "age": 128,
-      "gender": "Female",
-      "race": "Elf",
-      "class": "Ranger",
-      "character": "Elara Windwhisper is a master of the bow, trained in the ancient elven ways of archery. She roams the forests and mountains, defending her homeland from all who would threaten it. She is quiet and reserved, but her aim is deadly and her loyalty unwavering."
-    },
-    {
-      "image_url": "/resources/img/avatar/orc/small_orc_warrior_m10.png",
-      "name": "Grommash Hellscream",
-      "age": 40,
-      "gender": "Male",
-      "race": "Orc",
-      "class": "Warrior",
-      "character": "Grommash is a fierce and powerful warrior, feared by many for his incredible strength and fighting prowess. Despite his fearsome reputation, he has a strong sense of honor and loyalty to his allies."
-    },
-    {
-      "image_url": "/resources/img/avatar/elf/small_elf_wizard_f01.png",
-      "name": "Lirienia Nightshade",
-      "age": 240,
-      "gender": "Female",
-      "race": "Elf",
-      "class": "Wizard",
-      "character": "Lirienia is a powerful wizard, known for her incredible mastery of the arcane arts. She is often lost in her own thoughts and can be a bit absent-minded at times, but her intellect and magical abilities are unmatched."
-    },
-    {
-      "image_url": "/resources/img/avatar/human/small_human_warrior_m03.png",
-      "name": "Aiden Blackwood",
-      "age": 28,
-      "gender": "Male",
-      "race": "Human",
-      "class": "Paladin",
-      "character": "Aiden Blackwood is a holy warrior of the order of the Silver Hand. He was raised in a monastery, where he learned to wield both sword and divine magic. He travels the land, seeking to uphold justice and righteousness, and to vanquish evil wherever it may be found."
-    }
-  ];
 
   getPersonasFromConfig(callback) {
     let url = '/personas';          
@@ -95,16 +58,35 @@ class DnGPT {
     });
   }
 
-  createParty(size, callback) {
-    let url = '/random_party?party_size='+size;          
+  generateParty(size, callback) {
+    let url = '/random_party?party_size='+size;
     fetch(url)
       .then((response) => response.json())
-      .then((data) => {callback({
-        "result": data
-        });
+      .then((data) => {
+        this.Party=data;
+        this.EventTarget.dispatchEvent(this.onPartyChanged)            
+        if (callback) {
+          callback({"result": data});
+        }
       }).catch((error) => {
         console.error("Error fetching Personas", error);
     });
+  }
+
+  defaultParty(size, callback) {
+    let url = '/default_party?party_size='+parseInt(size);
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        this.Party=data;
+        this.EventTarget.dispatchEvent(this.onPartyChanged)
+        if (callback) {
+          callback({"result": data});
+        }    
+      }).catch((error) => {
+        console.error("Error fetching Personas", error);
+    });
+
   }
   
   createHero(name, age, hclass, race, gender, story, image_url) {
@@ -130,7 +112,6 @@ class DnGPT {
           this.Party[hero_idx].image_url = data.result.url;
           console.log(hero_idx +' '+ this.Party.length);
           if (hero_idx==this.Party.length-1) {
-
             this.EventTarget.dispatchEvent(this.onPartyChanged)            
           }
       }).catch((error) => {
