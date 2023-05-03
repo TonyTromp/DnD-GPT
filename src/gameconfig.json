@@ -1,7 +1,10 @@
 {
-    "DM_PromptCreateParty": "Introduce the Game Charactersof a Dungeons and Dragons game. We have {{size}} players. Respond in JSON format like this { \"name\": value, \"age\": value,  \"gender\": value, \"race\": value, \"class\": value, \"character\": value}' with the correct parameters. Use full name instead of single name. Valid values for race field is: Human, Orc, Elf, Dwarf. Valid values for class field is: Warrior, Thief, Wizard. The character field needs to have a backstory of at least 5 whole sentences. Respond in valid JSON only, no comments or additional information. Wrap the response in a JSON array",
-    "DM_PromptCreateDM": "Create a Dungeon Master name and persona. Explain your role as dungeon master in style of this persona. Respond in JSON format like this { \"name\": value, \"age\": value,  \"gender\": value, \"race\": value, \"class\": value, \"character\": value}' with the correct parameters. Respond in valid JSON only. No comments or additional information.",
+  "DM_PromptCreateParty": "JSON array of {{size}} D&D characters with the properties: name, age, gender, race, class, and character (including backstory). Respond in JSON only",
+  "DM_PromptCreateDM": "Create a Dungeon Master persona in JSON format with the properties: name, age, gender, race, class, and character (including a brief explanation of your role as DM).",
+  "DM_PromptCreateParty_20230502": "Introduce the Game Charactersof a Dungeons and Dragons game. We have {{size}} players. Respond in JSON format like this { \"name\": value, \"age\": value,  \"gender\": value, \"race\": value, \"class\": value, \"character\": value}' with the correct parameters. Use full name instead of single name. Valid values for race field is: Human, Orc, Elf, Dwarf. Valid values for class field is: Warrior, Thief, Wizard. The character field needs to have a backstory of at least 5 whole sentences. Respond in valid JSON only, no comments or additional information. Wrap the response in a JSON array",
+  "DM_PromptCreateDM_20230502": "Create a Dungeon Master name and persona. Explain your role as dungeon master in style of this persona. Respond in JSON format like this { \"name\": value, \"age\": value,  \"gender\": value, \"race\": value, \"class\": value, \"character\": value}' with the correct parameters. Respond in valid JSON only. No comments or additional information.",
     "DM_SubmitDM": "You will act as a Dungeon Master and will host our game.  Your name is {{name}} and you are a {{race}} {{class}}. You have the following background story and character: {{story}}. Only reply as your character.",
+    "Classes": ["",""],
     "DM_Personas": [
         { "name": "Eldron the Enchanter",
           "image":"",
@@ -34,5 +37,43 @@
           "name": "Aria Nightshade",
           "character": "Aria Nightshade is a mysterious and enigmatic DM who values intrigue and secrecy in her campaigns. She is a master of subterfuge and deception, and loves to weave intricate stories and conspiracies for her players to unravel. Aria is calm and collected, and rarely shows her emotions, which makes it difficult for her players to read her. She is an expert at creating complex puzzles and challenges, and expects her players to use their wits and intellect to solve them. Aria has a love for the occult and the supernatural, and often incorporates these themes into her games to create a sense of eerie unease and tension. Overall, Aria Nightshade is a DM who values intelligence, curiosity, and a willingness to explore the unknown, and expects her players to be willing to delve into the darkest corners of her worlds to uncover the truth."
         }
+    ],
+    "Hero_Personas": [
+      {
+        "image_url": "/resources/img/avatar/elf/small_elf_warrior_f01.png",
+        "name": "Elara Windwhisper",
+        "age": 128,
+        "gender": "Female",
+        "race": "Elf",
+        "class": "Ranger",
+        "character": "Elara Windwhisper is a master of the bow, trained in the ancient elven ways of archery. She roams the forests and mountains, defending her homeland from all who would threaten it. She is quiet and reserved, but her aim is deadly and her loyalty unwavering."
+      },
+      {
+        "image_url": "/resources/img/avatar/orc/small_orc_warrior_m10.png",
+        "name": "Grommash Hellscream",
+        "age": 40,
+        "gender": "Male",
+        "race": "Orc",
+        "class": "Warrior",
+        "character": "Grommash is a fierce and powerful warrior, feared by many for his incredible strength and fighting prowess. Despite his fearsome reputation, he has a strong sense of honor and loyalty to his allies."
+      },
+      {
+        "image_url": "/resources/img/avatar/elf/small_elf_wizard_f01.png",
+        "name": "Lirienia Nightshade",
+        "age": 240,
+        "gender": "Female",
+        "race": "Elf",
+        "class": "Wizard",
+        "character": "Lirienia is a powerful wizard, known for her incredible mastery of the arcane arts. She is often lost in her own thoughts and can be a bit absent-minded at times, but her intellect and magical abilities are unmatched."
+      },
+      {
+        "image_url": "/resources/img/avatar/human/small_human_warrior_m03.png",
+        "name": "Aiden Blackwood",
+        "age": 28,
+        "gender": "Male",
+        "race": "Human",
+        "class": "Paladin",
+        "character": "Aiden Blackwood is a holy warrior of the order of the Silver Hand. He was raised in a monastery, where he learned to wield both sword and divine magic. He travels the land, seeking to uphold justice and righteousness, and to vanquish evil wherever it may be found."
+      }      
     ]
 }
