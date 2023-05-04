@@ -12,7 +12,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
 
-
     <script src="/resources/js/flaskgpt_client.js"></script>
     <script src="/resources/js/dnd_client.js"></script>
 
@@ -73,7 +72,6 @@
         text-decoration: none;
         display: inline-block;
         margin: 4px 2px;
-        cursor: pointer;
         border-radius: 24px;
       }
 
@@ -162,7 +160,9 @@
                 </p>
                 <p>&nbsp;</p>
                 <p>
-                  <button id="btn_start_game" type="button" class="pill-button">&#x21E8; Continue</button>
+                  <div style="padding: 70px 0;display: inline-block; vertical-align: middle;">
+                    <button id="btn_start_game" type="button" class="btn pill-button">&#x21E8;</span> Continue</button>  
+                  </div>
                 </p>
               </div>
 
@@ -421,9 +421,22 @@
     });
   }
 
+  function ui_loading_text() {
+    return  '<div class="spinner-border spinner-border-sm" role="status">'
+          + '<span class="sr-only">Loading...</span>'
+          + '</div>'
+          + '</span> Loading...';
+  }
+
+  function ui_loading_btn(dom_btn) {
+    $(event.srcElement).empty();
+    $(event.srcElement).html(ui_loading_text());
+    $(event.srcElement).prop('disabled', true);
+  }
+
   // Event Handler For Panels/Game-Screens
   function ui_on_panel_changed(event, panel) {
-    console.log('Event::ui_on_panel_changed->'+panel.id);
+    console.log('Event::ui_on_panel_changed -> '+panel.id);
     switch (panel.id) {
       case 'panel_create_dm':
               $("#frame-content").css("background-image",'url("/resources/img/background/frame/dnd_books_03.png")');
@@ -432,44 +445,13 @@
       case  'panel_create_party':
               $("#frame-content").css("background-image",'url("/resources/img/background/frame/dnd_tavern01.png")');
               $("#frame-content").css("background-size","781px 512px");
-              $("#story_panel ").css("height","512px");
+              $("#story_panel").css("height","512px");
               break;
       case 'panel_review_party':
               $("#frame-content").css("background-size","");
               $("#story_panel ").css("height","");
               $("#frame-content").css("background-image", '');
               $("#frame-content").css("background-color", '#000000');
-
-              // Initialize Party depending on Party Size and Create_Mode
-              create_mode=document.getElementById('setup_create_mode').value;
-              party_size=parseInt(document.getElementById('setup_party_size').value);
-
-              if (create_mode=='AI') {
-                console.log('CreateMode::AI');
-                dnd_gpt.generateParty(party_size,
-                  function(event) {
-                    console.log("onPartyChanged:Update Carousel");
-                    // using Events now
-                    //for (var i=0; i<dnd_gpt.Party.length; i++) {
-                    //  ui_add_hero_carousel('carousel-inner-div', (i==0), dnd_gpt.Party[i]);
-                    //}                  
-                  }
-                );
-              } else {
-                  console.log('CreateMode::DEFAULT');
-                  dnd_gpt.defaultParty(party_size);
-              }
-
-
-              /*
-              dnd_gpt.EventTarget.addEventListener("onPartyChanged", (event) => {
-                console.log("onPartyChanged:Update Carousel");
-                for (var i=0; i<dnd_gpt.Party.length; i++) {
-                  ui_add_hero_carousel('carousel-inner-div', (i==0), dnd_gpt.Party[i]);
-                }                  
-              });
-              dnd_gpt.setHeroImages();
-              */
 
               break;
     }
@@ -495,7 +477,8 @@
     $('#carousel-inner-div').empty();
     for (var i=0; i<dnd_gpt.Party.length; i++) {
       ui_add_hero_carousel('carousel-inner-div', (i==0), dnd_gpt.Party[i]);
-    }                  
+    }
+    ui_toggle_panel('story_panel','panel_review_party');    
   }
 
   window.onload = function () {
@@ -590,30 +573,60 @@
 
       // AddEvent::Button - btn_start_game
       document.getElementById("btn_start_game").addEventListener("click", function (event) {
+        // Show loading...
+        var originalInnerHTML=$(event.srcElement).html();
+        ui_loading_btn(event.srcElement);
+
+        // Show Panel
         ui_toggle_panel('story_panel','panel_create_dm');
+
+        $(event.srcElement).html(originalInnerHTML);
+        $(event.srcElement).prop('disabled',false)
       });
 
       // AddEvent::Button - btn_create_dm
       document.getElementById("btn_create_dm").addEventListener("click", function (event) {
-        // Code to setup DM.
+        // Show loading...
+        var originalInnerHTML=$(event.srcElement).html();
+        ui_loading_btn(event.srcElement);
+
         dnd_gpt.DungeonMaster=getPersonaByName($("#dm-input-name").val());
         console.log(dnd_gpt.DungeonMaster);
 
         // Submit DM Persona
-        /*
         dnd_gpt.submitDMPersona(function(data){
           console.log('Client done')
-          console.log(data);
+          console.log(data.result);
+          // We save the DM introduction so we can show it later in the chat window
+          dnd_gpt.Messages.push( {"persona":"dm","message":data.result} );
+
+          ui_toggle_panel('story_panel','panel_create_party');          
         });
-        */
 
-
-        ui_toggle_panel('story_panel','panel_create_party');
       });
 
       // AddEvent::Button - btn_create_party
       document.getElementById("btn_create_party").addEventListener("click", function (event) {
-        ui_toggle_panel('story_panel','panel_review_party');
+        // Show loading...
+        var originalInnerHTML=$(event.srcElement).html();
+        ui_loading_btn(event.srcElement);
+
+
+
+        // Initialize Party depending on Party Size and Create_Mode
+        create_mode=document.getElementById('setup_create_mode').value;
+        party_size=parseInt(document.getElementById('setup_party_size').value);
+
+        if (create_mode=='AI') {
+          console.log('CreateMode::AI');
+          dnd_gpt.generateParty(party_size);
+        } else {
+           console.log('CreateMode::DEFAULT');
+           dnd_gpt.defaultParty(party_size);
+        }
+        
+        //Panel is Toggled from party_changed_event
+        //ui_toggle_panel('story_panel','panel_review_party');
       });
       
       

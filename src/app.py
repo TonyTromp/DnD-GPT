@@ -24,11 +24,11 @@ with app.app_context():
     config=json.load(f)
     f.close()
 
-    app.config['DM_PERSONAS'] = config['DM_Personas']
-    app.config['HERO_PERSONAS'] = config['Hero_Personas']
-    app.config['PROMPT_CREATE_DM'] = config['DM_PromptCreateDM']
-    app.config['PROMPT_SUBMIT_DM'] = config['DM_SubmitDM']
-    app.config['PROMPT_CREATE_PARTY'] = config['DM_PromptCreateParty']
+    app.config['DM_PERSONAS'] = config['Default_DungeonMaster']
+    app.config['HERO_PERSONAS'] = config['Default_Party']
+    app.config['PROMPT_CREATE_PARTY'] = config['Prompts']['GenerateParty']
+    app.config['PROMPT_CREATE_DM'] = config['Prompts']['GenerateDM']
+    app.config['PROMPT_SUBMIT_DM'] = config['Prompts']['CreateDM']
 
 
 # /:default
@@ -172,26 +172,27 @@ def default_party():
 
 # Create random party based on size
 @app.route('/random_party', methods=['GET', 'POST'])
-def create_random_party():
+def generate_random_party():
     logging.info( str("[+] [{method}] /random_party").format(method=request.method) )
     party_size = request.args.get('party_size') if request.method == 'GET' else request.form['party_size']
     if (party_size is None):
         party_size='4'
-    return jsonify(__create_random_party(party_size))
+    return jsonify(__generate_random_party(party_size))
 
-def __create_random_party(party_size):
+def __generate_random_party(party_size):
     if (int(party_size)>=8):
         party_size=8
 
     prompt=app.config['PROMPT_CREATE_PARTY'].replace('{{size}}', str(party_size))
-    message=[{"role": "user", "content": prompt}]
+    messages.append({"role": "user", "content": prompt})
 
     try:
         response = openai.ChatCompletion.create(
             model=gpt_model,
-            messages=message
+            messages=messages
         )
         content = response.choices[0].message["content"]
+        messages.append({"role": "assistant", "content": content})
     except RateLimitError:
         content = "The server is experiencing a high volume of requests. Please try again later."
     try: 
@@ -251,5 +252,9 @@ def __get_avatar(race, hclass, gender):
     return choosen_file
 
 if __name__ == '__main__':
-    logger.info('"About Us" page retrieved')
+    logger.info('D&D-GPT Started...')
+    messages.append({"role": "system", "content": "You are a Dungeon Master in our D&D game."})
+    messages.append({"role": "system", "content": "Valid races are: Human, Elf, Orc, Dwarf"})
+    messages.append({"role": "system", "content": "Valid classes are: Warrior, Wizard, Thief"})
+
     app.run(host='0.0.0.0', port=8000, debug=True)

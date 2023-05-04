@@ -5,7 +5,7 @@ from PIL import Image
 from glob import glob
 import os
 
-input_path = './resources/img/avatar/*/*.png'
+input_path = './resources/img/avatar/elf/new/*.png'
 save_file_prefix = 'small_'
 recursive = True
 

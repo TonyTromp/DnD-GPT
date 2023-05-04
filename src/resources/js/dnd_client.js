@@ -2,6 +2,7 @@ class DnGPT {
 
   DungeonMaster;
   Party = [];
+  Messages = [{"persona":"","message":""}];
 
   /* Default Party */
   onPartyChanged = new CustomEvent("onPartyChanged", {
